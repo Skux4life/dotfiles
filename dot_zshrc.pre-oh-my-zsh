@@ -1,0 +1,211 @@
+unalias run-help
+autoload run-help
+HELPDIR=$(command brew --prefix)/share/zsh/help
+alias help=run-help
+
+eval "$(saml2aws --completion-script-zsh)"
+
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+complete -C '/opt/homebrew/bin/aws_completer' aws
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+AWS_SESSION_DURATION=43200
+AWS_ROLE=role/enc/developer
+AWS_ROLE_PROD=role/enc/readonly
+
+AWS_ACCOUNT_ID_BAKE=947856621188
+AWS_ACCOUNT_ID_SHARED_NONPROD=098120835448
+AWS_ACCOUNT_ID_SHARED_PROD=313169804514
+AWS_ACCOUNT_ID_SANDBOX=396354143083
+AWS_ACCOUNT_ID_NONPROD=979232746483
+AWS_ACCOUNT_ID_PROD=770945863943
+AWS_ACCOUNT_ID_ARQ_NONPROD=443148341722
+AWS_ACCOUNT_ID_ARQ_PROD=742884465954
+AWS_ACCOUNT_ID_DEV=508679486955
+
+AWS_PROFILE_BAKE=bake
+AWS_PROFILE_SHARED_NONPROD=shared-nonprod
+AWS_PROFILE_SHARED_PROD=shared-prod
+AWS_PROFILE_SANDBOX=sandbox
+AWS_PROFILE_NONPROD=nonprod
+AWS_PROFILE_PROD=prod
+AWS_PROFILE_ARQ_NONPROD=arq-nonprod
+AWS_PROFILE_ARQ_PROD=arq-prod
+AWS_PROFILE_DEV=rest-workload-dev
+
+bake() {
+  saml2aws login --profile ${AWS_PROFILE_BAKE} --role=arn:aws:iam::${AWS_ACCOUNT_ID_BAKE}:${AWS_ROLE} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_BAKE}
+}
+
+dev() {
+  saml2aws login --force --profile ${AWS_PROFILE_DEV} --role=arn:aws:iam::${AWS_ACCOUNT_ID_DEV}:${AWS_ROLE} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_DEV}
+}
+
+shared-nonprod() {
+  saml2aws login --profile ${AWS_PROFILE_SHARED_NONPROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_SHARED_NONPROD}:${AWS_ROLE_PROD} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_SHARED_NONPROD}
+}
+
+shared-prod() {
+  saml2aws login --profile ${AWS_PROFILE_SHARED_PROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_SHARED_PROD}:${AWS_ROLE_PROD} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_SHARED_PROD}
+}
+
+sandbox() {
+  saml2aws login --profile ${AWS_PROFILE_SANDBOX} --role=arn:aws:iam::${AWS_ACCOUNT_ID_SANDBOX}:${AWS_ROLE} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_SANDBOX}
+}
+
+nonprod() {
+  saml2aws login --profile ${AWS_PROFILE_NONPROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_NONPROD}:${AWS_ROLE} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_NONPROD}
+}
+
+prod() {
+  saml2aws login --profile ${AWS_PROFILE_PROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_PROD}:${AWS_ROLE_PROD} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_PROD}
+}
+
+arq-nonprod() {
+  saml2aws login --profile ${AWS_PROFILE_ARQ_NONPROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_ARQ_NONPROD}:${AWS_ROLE_PROD} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_ARQ_NONPROD}
+}
+
+arq-prod() {
+  saml2aws login --profile ${AWS_PROFILE_ARQ_PROD} --role=arn:aws:iam::${AWS_ACCOUNT_ID_ARQ_PROD}:${AWS_ROLE_PROD} --session-duration=${AWS_SESSION_DURATION}
+  export AWS_PROFILE=${AWS_PROFILE_ARQ_PROD}
+}
+
+alias bk="bake"
+alias sb="sandbox"
+alias np="nonprod"
+alias pd="prod"
+alias arqnp="arq-nonprod"
+alias arqpd="arq-prod"
+
+alias profile="printenv | grep AWS_PROFILE"
+
+export EPL=":(exclude)package-lock.json"
+
+alias gst='git status'
+alias gp='git pull'
+alias gpr='git pull -r'
+alias gf='git fetch'
+alias gc='git commit'
+alias gcam='git commit -am'
+alias gd='git diff'
+alias gdiff='git diff -- . ${EPL}'
+alias gl='git log --graph --abbrev-commit --decorate --'
+alias gr='git pull --rebase && git rebase origin/master'
+alias trim='awk "{\$1=\$1};1"'
+alias ans="ansible-playbook -K"
+
+alias cfn-ls="aws cloudformation list-stacks --stack-status-filter CREATE_IN_PROGRESS CREATE_FAILED CREATE_COMPLETE ROLLBACK_IN_PROGRESS ROLLBACK_FAILED ROLLBACK_COMPLETE DELETE_IN_PROGRESS DELETE_FAILED UPDATE_IN_PROGRESS UPDATE_COMPLETE_CLEANUP_IN_PROGRESS UPDATE_COMPLETE UPDATE_ROLLBACK_IN_PROGRESS UPDATE_ROLLBACK_FAILED UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS UPDATE_ROLLBACK_COMPLETE REVIEW_IN_PROGRESS IMPORT_IN_PROGRESS IMPORT_COMPLETE 
+IMPORT_ROLLBACK_IN_PROGRESS IMPORT_ROLLBACK_FAILED --query 'StackSummaries[].[StackName]' --output text | sort"
+alias cfn-out="aws cloudformation describe-stacks --query 'Stacks[0].Outputs[*].[Description,OutputValue]' --output table --stack-name"
+alias sqs-len="aws sqs get-queue-attributes --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible ApproximateNumberOfMessagesDelayed --queue-url"
+alias sqs-purge="aws sqs purge-queue --queue-url"
+alias console='saml2aws console --profile ${AWS_PROFILE}'
+
+# Call with a prompt string or use a default
+confirm() {
+    read -r -p "${1:-Are you sure? [y/N]} " response
+    case "$response" in
+        [yY][eE][sS]|[yY]) 
+            true
+            ;;
+        *)
+            false
+            ;;
+    esac
+}
+
+cfn-rm() {
+  STACK_NAME="$1"
+  if [[ "${STACK_NAME}" == "" ]]; then
+    echo "ERROR: Must provide the name of the stack to delete!"
+    return 1
+  fi
+  echo "Deleting ${STACK_NAME}..."
+  aws cloudformation list-stack-resources --stack-name "${STACK_NAME}" --query "StackResourceSummaries[?ResourceType=='AWS::S3::Bucket'].PhysicalResourceId" | jq .[] | xargs -L1 -I'{}' aws s3 rm --recursive s3://{}
+  aws cloudformation delete-stack --stack-name "${STACK_NAME}"
+  echo "  done!"
+}
+
+cfn-clean() {
+  GREP_STRING=${1:-${USER}}
+  FORCE_FLAG=$2
+
+  if [[ "${GREP_STRING}" == "" ]]; then
+    echo "ERROR: Please provide a search string or ensure that the \$USER variable is set!"
+    return 1
+  fi
+
+  echo "Searching for stacks containing ${GREP_STRING}..."
+  STACKS_TO_DELETE=`cfn-ls | grep ${GREP_STRING}`
+
+  if [[ "${STACKS_TO_DELETE}" == "" ]]; then
+    echo "  No stacks found to clean up!"
+    return 0
+  fi
+
+  echo
+  echo "The following stacks will be deleted:"
+  echo
+  echo "${STACKS_TO_DELETE}" | pr -T -o 4
+  echo
+  if [[ "${FORCE_FLAG}" != "-f" ]]; then
+    confirm || return 0
+  fi
+  echo
+
+  export -f cfn-rm
+  echo "${STACKS_TO_DELETE}" | xargs -L1 -I'{}' bash -c 'cfn-rm {}'
+  
+  echo
+  echo "Waiting for stacks to finish deleting..."
+  echo "${STACKS_TO_DELETE}" | xargs -L1 -I'{}' aws cloudformation wait stack-delete-complete --stack-name {}
+  echo "  done!"
+}
+
+cfn-output() {
+  aws cloudformation describe-stacks --stack-name $1 --query "Stacks[0].Outputs[*].[Description,OutputValue]" --output table
+}
+
+cfn-me() {
+  cfn-ls | grep ${USER}
+}
+
+awslogs-len() {
+  aws logs describe-log-groups \
+    | jq '[.logGroups[] | {logGroupName: .logGroupName, storedBytes: .storedBytes}]' \
+    | jq 'sort_by(.storedBytes)'
+}
+
+# fzh - fuzzy search history
+# See https://github.com/junegunn/fzf/wiki/examples#command-history
+writecmd (){ perl -e 'ioctl STDOUT, 0x5412, $_ for split //, do{ chomp($_ = <>); $_ }' ; }
+
+fzh() {
+  ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -re 's/^\s*[0-9]+\s*//' | writecmd
+}
+
+fix-perms() {
+  fd -H -E .git -t d -x chmod 755 {}
+  fd -H -E .git -t f -x chmod 644 {}
+}
+
+# Import a local override file if it exists
+if [ -f "$HOME/.local_bash_aliases" ] ; then
+    . "$HOME/.local_bash_aliases"
+fi
+
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+export ANDROID_HOME=/Users/$USER/Library/Android/sdk
+export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools"
