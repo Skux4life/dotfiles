@@ -103,6 +103,7 @@ source ~/.zshrc.pre-oh-my-zsh
 alias vim="nvim"
 alias cat="bat"
 alias clr="clear"
+alias ls="exa"
 
 export PATH=$PATH:~/go/bin
 
