@@ -1,0 +1,23 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+alias la = 'ls -a --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+
+set -o vi
+
+alias k='kubectl'
+
+source /usr/share/bash-completion/bash_completion
+source <(kubectl completion bash)
+complete -o default -F __start_kubectl k
+
+. <(flux completion bash)
+
+eval "$(starship init bash)"
