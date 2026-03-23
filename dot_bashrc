@@ -21,3 +21,5 @@ complete -o default -F __start_kubectl k
 . <(flux completion bash)
 
 eval "$(starship init bash)"
+
+eval "$(mise activate bash)"
