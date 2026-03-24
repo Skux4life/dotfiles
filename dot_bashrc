@@ -18,8 +18,8 @@ source /usr/share/bash-completion/bash_completion
 source <(kubectl completion bash)
 complete -o default -F __start_kubectl k
 
+eval "$(mise activate bash)"
+
 . <(flux completion bash)
 
 eval "$(starship init bash)"
-
-eval "$(mise activate bash)"
