@@ -1,0 +1,3 @@
+{{- if env "DEVCONTAINER" }}
+{{ .chezmoi.homeDir }}/.config/hypr
+{{- end}}

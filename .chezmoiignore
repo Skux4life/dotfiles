@@ -1,4 +1,1 @@
-{{- if env "DEVCONTAINER" }}
-dot_config/hypr/**
-{{- end }}
 setup
