@@ -2,6 +2,13 @@
 # ~/.bashrc
 #
 
+#==============HISTORY=================
+HISTSIZE=100000
+HISTFILESIZE=200000
+HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 export PATH="$PATH:$HOME/.local/bin"
@@ -62,3 +69,8 @@ command -v flux &> /dev/null && source <(flux completion bash)
 
 
 eval "$(starship init bash)"
+
+#==========Nice shell options===========
+shopt -s cdspell # auto correct minor typos when using cd
+shopt -s dirspell # try to spell-correct directories when using tab completion
+shopt -s globstar # enables ** for globs
