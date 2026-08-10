@@ -15,12 +15,47 @@ set -o vi
 
 alias k='kubectl'
 
-source /usr/share/bash-completion/bash_completion
-source <(kubectl completion bash)
-complete -o default -F __start_kubectl k
+# ============ Completions =========
+if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+elif [[ -f /etc/bash_completion ]]; then
+  source /etc/bash_completion
+fi
+
+# Completion behaviour tweaks
+bind "set completion-ignore-case on"        # case-insensitive tab completion
+bind "set show-all-if-ambiguous on"         # show matches immediately, no double-tab
+bind "set menu-complete-display-prefix on"
+bind "set completion-map-case on"           # treat - and _ as equivalent
+bind '"\t": menu-complete'                  # Tab cycles through matches
+bind '"\e[Z": menu-complete-backward'       # Shift-Tab cycles backward
+
+# Adjust path if fzf was installed elsewhere (e.g. via git clone instead of package manager)
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+
+# Better default fzf appearance/behavior
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview-window=right:60%:wrap"
+
+# Use fd instead of find if you have it installed (faster, respects .gitignore)
+if command -v fd &> /dev/null; then
+    export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
+# Preview file contents in Ctrl+T (uses bat if available, falls back to cat)
+if command -v bat &> /dev/null; then
+    export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :100 {}'"
+else
+    export FZF_CTRL_T_OPTS="--preview 'cat {}'"
+fi
+
+# TOOL COMPLETIONS
+command -v kubectl &> /dev/null && source <(kubectl completion bash)
+command -v gh &> /dev/null && source <(gh completion -s bash)
+command -v flux &> /dev/null && source <(flux completion bash)
+
+# complete -o default -F __start_kubectl k
 
 eval "$(mise activate bash)"
-
-. <(flux completion bash)
 
 eval "$(starship init bash)"
