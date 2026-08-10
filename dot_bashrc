@@ -15,6 +15,9 @@ set -o vi
 
 alias k='kubectl'
 
+# mise
+eval "$(mise activate bash)"
+
 # ============ Completions =========
 if [[ -f /usr/share/bash-completion/bash_completion ]]; then
   source /usr/share/bash-completion/bash_completion
@@ -30,8 +33,9 @@ bind "set completion-map-case on"           # treat - and _ as equivalent
 bind '"\t": menu-complete'                  # Tab cycles through matches
 bind '"\e[Z": menu-complete-backward'       # Shift-Tab cycles backward
 
-# Adjust path if fzf was installed elsewhere (e.g. via git clone instead of package manager)
-[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+if command -v fzf &> /dev/null; then
+  eval "$(fzf --bash)"
+fi
 
 # Better default fzf appearance/behavior
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview-window=right:60%:wrap"
@@ -56,6 +60,5 @@ command -v flux &> /dev/null && source <(flux completion bash)
 
 # complete -o default -F __start_kubectl k
 
-eval "$(mise activate bash)"
 
 eval "$(starship init bash)"
