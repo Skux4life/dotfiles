@@ -13,8 +13,10 @@ PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 [[ $- != *i* ]] && return
 export PATH="$PATH:$HOME/.local/bin"
 
-alias ls='ls --color=auto'
-alias la='ls -a --color=auto'
+alias ls='lsd -F'
+alias la='lsd -AF'
+alias ll='lsd -lAF'
+alias lg='lsd -F --group-dirs=first'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
