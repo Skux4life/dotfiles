@@ -3,9 +3,9 @@
 set -euo pipefail
 
 if ! command -v chezmoi >/dev/null; then
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME"/.local/bin init --apply git@github.com:Skux4life/dotfiles.git
+	sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME"/.local/bin init --apply git@github.com:Skux4life/dotfiles.git
 fi
 
-sudo apt-get update && sudo apt-get install vim -y
+# sudo apt-get update && sudo apt-get install vim -y
 
 exit 0

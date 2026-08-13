@@ -1,4 +1,5 @@
 [tools]
+tmux = "latest"
 bat = "latest"
 chezmoi = "latest"
 starship = "latest"
