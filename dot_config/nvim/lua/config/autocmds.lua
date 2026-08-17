@@ -23,9 +23,9 @@ local function transparent_off()
 	end
 end
 
-vim.api.nvim_create_user_autocmd("TransparentOn", transparent_on, {})
-vim.api.nvim_create_user_autocmd("TransparentOff", transparent_off, {})
-vim.api.nvim_create_user_autocmd("TransparentToggle", function()
+vim.api.nvim_create_user_command("TransparentOn", transparent_on, {})
+vim.api.nvim_create_user_command("TransparentOff", transparent_off, {})
+vim.api.nvim_create_user_command("TransparentToggle", function()
 	if vim.g.transparent_enabled then
 		transparent_off()
 	else
