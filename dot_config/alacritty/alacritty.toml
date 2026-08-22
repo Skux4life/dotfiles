@@ -1,0 +1,26 @@
+[general]
+import = ["~/.config/alacritty/nord.toml"]
+
+[font]
+size = 12.0
+
+[font.normal]
+family = "SpaceMono Nerd Font Mono"
+style = "Regular"
+
+[font.bold]
+family = "SpaceMono Nerd Font Mono"
+style = "Bold"
+
+[font.italic]
+family = "SpaceMono Nerd Font Mono"
+style = "Italic"
+
+[font.bold_italic]
+family = "SpaceMono Nerd Font Mono"
+style = "Bold Italic"
+
+[window]
+opacity = 0.8
+decorations = "none"
+padding = { x = 5, y = 0 }
