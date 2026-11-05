@@ -53,7 +53,6 @@ zinit ice wait lucid
 zinit snippet OMZP::git
 
 zinit ice wait lucid
-zinit snippet OMZP::aws
 
 # zsh-completions must use blockf so zinit manages the fpath entry
 zinit ice wait lucid blockf atpull"zinit creinstall -q ."
